@@ -57,6 +57,7 @@ const Dashboard = ({ setIsAuthenticated }) => {
   };
 
   const confirmDelete = async () => {
+    if (!productToDelete) return;
     const { error } = await supabase.from('products').update({ is_deleted: true }).eq('id', productToDelete.id);
     if (error) {
       showNotification('Error al mover a la papelera.', 'error');
@@ -70,19 +71,35 @@ const Dashboard = ({ setIsAuthenticated }) => {
 
   return (
     <div className="min-h-screen bg-admin-light">
+      {/* --- CABECERA REESTRUCTURADA --- */}
       <header className="bg-white shadow-md">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-admin-primary">Mis Productos</h1>
-          <div className="flex items-center gap-4">
-            <Link to="/sales" className="text-gray-600 font-semibold flex items-center gap-2 hover:text-admin-primary transition-colors">
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center flex-wrap gap-4">
+          
+          {/* Grupo de Acciones a la Izquierda */}
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Link to="/sales" className="text-gray-600 font-semibold flex items-center gap-2 hover:text-admin-primary transition-colors text-sm sm:text-base">
               <FaChartLine /> <span>Ventas</span>
             </Link>
-            <Link to="/add-product" className="bg-admin-secondary text-white font-semibold px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-orange-500 transition-colors">
-              <FaPlus /> <span>Añadir Producto</span>
+            <Link to="/add-product" className="bg-admin-secondary text-white font-semibold px-3 py-2 sm:px-4 rounded-lg flex items-center gap-2 hover:bg-orange-500 transition-colors text-sm sm:text-base">
+              <FaPlus /> <span>Añadir</span>
             </Link>
-            <Link to="/trash" className="text-gray-500 hover:text-red-500"><FaTrash size={20} /></Link>
-            <button onClick={handleLogout} className="text-gray-500 hover:text-admin-primary"><FaSignOutAlt size={20} /></button>
           </div>
+
+          {/* Título (ahora en el centro) */}
+          <h1 className="text-xl sm:text-2xl font-bold text-admin-primary order-first w-full text-center md:order-none md:w-auto">
+            Mis Productos
+          </h1>
+
+          {/* Grupo de Utilidades a la Derecha */}
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Link to="/trash" className="text-gray-500 hover:text-red-500 p-2" title="Papelera">
+              <FaTrash size={20} />
+            </Link>
+            <button onClick={handleLogout} className="text-gray-500 hover:text-admin-primary p-2" title="Cerrar Sesión">
+              <FaSignOutAlt size={20} />
+            </button>
+          </div>
+
         </div>
       </header>
 
@@ -111,7 +128,6 @@ const Dashboard = ({ setIsAuthenticated }) => {
                         </div>
                       </div>
                     </td>
-                    {/* --- COLUMNA DE PRECIO MODIFICADA --- */}
                     <td className="px-6 py-4 whitespace-nowrap font-semibold">
                       {p.promo_price && p.promo_price < p.price ? (
                         <div className="flex items-baseline gap-2">
